@@ -52,10 +52,10 @@ public class Echo_Async : MonoBehaviour
             Socket socket = (Socket) ar.AsyncState;
             int count = socket.EndReceive(ar);
             print("客户端收到字节流长度 "+count);
-for (int i = 0; i < count; i++)
-{
-    print("========"+readBuff[i]);
-}
+            // for (int i = 0; i < count; i++)
+            // {
+            //     print("========"+readBuff[i]);
+            // }
 
             recvStr = System.Text.Encoding.UTF8.GetString(readBuff,0,count);    
             print(recvStr);
@@ -68,11 +68,34 @@ for (int i = 0; i < count; i++)
         }
     }
 
+    //异步发送
     public void send()
     {
         string sendStr = inputField.text;
-        byte[] sendByte = System.Text.Encoding.UTF8.GetBytes(sendStr);
-        socket.Send(sendByte);
+        byte[] sendByte = System.Text.Encoding.UTF8.GetBytes(sendStr);   
+        for (int i = 0; i < 100000; i++)
+        {
+            socket.BeginSend(sendByte,0,sendByte.Length,0,SendCallback,socket);            
+        }     
+    }
+
+    /// <summary>
+    /// SendCallBack 回调
+    /// </summary>
+    /// <param name="ar"></param>
+    public void SendCallback(IAsyncResult ar)
+    {
+        try
+        {
+            Socket socket  =  (Socket)ar.AsyncState;
+            int count = socket.EndSend(ar);
+            print("Socket send success " +count);
+        }
+        catch (SocketException ex)
+        {
+                print("Socket send fail " + ex.ToString());
+         
+        }
     }
 
     // Update is called once per frame
