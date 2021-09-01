@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
+using System;
 using System.Net.Mime;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,10 +27,15 @@ public class Connect : MonoBehaviour
         string sendStr = inputFieldA.text;
         byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
         socket.Send(sendBytes);
+        // for (int i = 0; i < 10000; i++)
+        // {
+        //       socket.BeginSend(sendBytes,0,sendBytes.Length,0,SendCallback,socket);            
+        // }
     }
 
      void Update()
      {
+        // print("-------------");
          receiveText.text = recvStr;
      }
 
@@ -64,5 +70,20 @@ public class Connect : MonoBehaviour
          {
              print("Socket Receive fail"+ex.ToString());
          }
+    }
+
+    //send 回调
+    public void SendCallback(IAsyncResult ar)
+    {   
+        try
+        {
+            Socket socket = (Socket) ar.AsyncState;
+            int count = socket.EndSend(ar);
+            print("Socket Send success"+count);
+        }
+        catch(SocketException ex)
+        {
+            print("Socket Send fail"+ex.ToString());
+        }
     }
 }

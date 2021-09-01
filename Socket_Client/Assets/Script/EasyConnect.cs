@@ -24,7 +24,7 @@ public class EasyConnect : MonoBehaviour
         byte[] sendByte = System.Text.Encoding.Default.GetBytes(sendStr);
 
         socket.Send(sendByte);
-        byte[] sendReceive = new byte[1024];
+        byte[] sendReceive = new byte[2048];
         
         socket.Receive(sendReceive);
         string sendReceiveStr = System.Text.Encoding.Default.GetString(sendReceive);
